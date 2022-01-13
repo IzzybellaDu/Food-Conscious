@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Past Recipes
+{% endblock %}
+
+{% block main %}
+<div class="section">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Recipe name</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for item in names %}
+                <tr>
+                    <td>{{ item["name"] }}</td>
+                    <td><form action="/recipes" method="post"><button name = "recipeid" value="{{ item['recipeid'] }}">Delete</button></form></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+
+</div>
+
+{% endblock %}

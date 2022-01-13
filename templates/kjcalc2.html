@@ -1,0 +1,163 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Kilojoules/Calories Calculator
+{% endblock %}
+
+{% block main %}
+<div class="section">
+    <h1>{{ recipe }}</h1>
+    <h3>Add an ingredient</h3>
+    <form action="/kjcalc" method="post">
+        <div class="input-box">
+            <select class="js-example-basic-single" name="ingredient">
+                <option></option>
+                {% for item in data %}
+                    <option value="{{ item['name'] }}">{{ item['name'] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="input-box">
+            <input class="input-field" type="text" autocomplete="off" name="quantity" placeholder="Quantity used in grams">
+        </div>
+
+        <button class="btn btn-outline-primary" type="submit" name="function" value="add">Add ingredient</button><br>
+    </form><br>
+    <p>Couldn't find an ingredient? Add a custom ingredient below!</p>
+
+    <!-- For unique ingredients not found in the database -->
+    <h3>Add a custom ingredient</h3>
+    <form action="/kjcalc" method="post">
+        <div class="input-box">
+            <input type="text" autocomplete="off" name="name" placeholder="Name of ingredient" class="input-field">
+        </div>
+        <div class="input-box">
+            <input type="number" autocomplete="off" name="totalkJ" placeholder="Energy of amount used" class="input-field">
+        </div>
+        <div class="input-box">
+            <input type="number" autocomplete="off" name="kJ100" placeholder="Energy per 100g" class="input-field">
+        </div>
+        <div class="input-box">
+            <input type="text" autocomplete="off" name="quantity" placeholder="Quantity used in grams" class="input-field">
+        </div>
+
+        <input autocomplete="off" name="units" type="radio" value="kJ">
+        <label for="kJ">kJ</label>
+        <input autocomplete="off" name="units" type="radio" value="Calories">
+        <label for="Calories">Calories</label>
+
+        <button class="btn btn-outline-primary" type="submit" name="function" value="addspecial">Add ingredient</button><br>
+    </form>
+</div>
+
+<div class="section">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Ingredient</th>
+                <th>Quantity used in grams</th>
+                <th>kJ per 100g</th>
+                <th>Calories per 100g</th>
+                <th>Total kJ</th>
+                <th>Total Calories</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for row in curr %}
+                <tr>
+                    <td>{{ row["ingredient"] }}</td>
+                    <td>{{ row["quantity"] }}</td>
+                    <td>{{ row["kJ100"] }}</td>
+                    <td>{{ row["kJ100"] | kjtocal }}</td>
+                    <td>{{ row["kJ"] }}</td>
+                    <td>{{ row["kJ"] | kjtocal }}</td>
+                    <td><form action="/deleteingredient" method="post"><button name = "ingredientid" value="{{ row['ingredientid'] }}">Delete</button></form></td>
+                </tr>
+
+            {% endfor %}
+
+            <tr style="font-weight:bold">
+                <b>
+                    <td>TOTAL</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ curr | totalling ("kJ")}}</td>
+                    <td>{{ curr | totalling ("kJ")| kjtocal }}</td>
+                    <td></td>
+                </b>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="section">
+    <form action="/kjcalc" method="post">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Total kJ</th>
+                    <th>Total calories</th>
+                    <th>Number of Servings</th>
+                    <th>kJ per serving</th>
+                    <th>Calories per serving</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if serveinfo %}
+                    <tr>
+                        <td>{{ serveinfo["totalkJ"] }}</td>
+                        <td>{{ (serveinfo["totalkJ"] | int) | kjtocal }}</td>
+                        <td>{{ serveinfo["serves"] }}</td>
+                        <td>{{ (serveinfo["totalkJ"] | int / serveinfo["serves"] | int) | round | int }}</td>
+                        <td>{{ (serveinfo["totalkJ"] | int / serveinfo["serves"] | int) | round | kjtocal }}</td>
+                    </tr>
+
+                {% else %}
+                    <tr>
+                        <td>
+                            <div class="input-box">
+                                <input type="text" autocomplete="off" name="totalkJ" placeholder="Energy count in kilojoules(kJ)" class="input-field">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="input-box">
+                                <input type="text" autocomplete="off" name="totalcal" placeholder="Energy count in calories" class="input-field">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="input-box">
+                                <input type="text" autocomplete="off" name="servings" placeholder="Number of servings" class="input-field">
+                                <button class="btn btn-outline-primary" type="submit" name="function" value="serving">Calculate</button>
+                            </div>
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                {% endif %}
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<form action="/kjcalc" method="post">
+    <button class="btn btn-outline-primary" type="submit" name="function" value="redirectto1">Return</button>
+</form>
+
+<footer>
+    <p>All food energy information has been supplied by <a href="https://www.foodstandards.gov.au/Pages/default.aspx">Food Standards Australia New Zealand</a>. <a href="https://www.foodstandards.gov.au/science/monitoringnutrients/afcd/Pages/downloadableexcelfiles.aspx">To download the information.</a></p>
+</footer>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.js-example-basic-single').select2({
+            placeholder: "Ingredient"
+        });
+    });
+</script>
+
+{% endblock %}

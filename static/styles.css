@@ -1,0 +1,61 @@
+body
+{
+    font-family: "Lato";
+    font-size: 24px;
+}
+
+h1
+{
+    font-family: "Abril Fatface";
+    font-size: 50px;
+    padding: 5px;
+}
+
+h2
+{
+    font-family: "Abril Fatface";
+    font-size: 35px;
+}
+
+h3
+{
+    font-size: 30px;
+}
+
+.page
+{
+    margin: 15px;
+}
+
+.input-box
+{
+    position: relative;
+    padding-right: 10px;
+    float: left;
+}
+
+.input-field
+{
+    padding: 6px 12px;
+}
+
+.selectbox
+{
+    padding: 6px 0px;
+}
+
+footer
+{
+    text-align: center;
+    padding: 3px;
+    font-size: 12px;
+}
+
+.section {
+    padding: 1rem;
+}
+
+.section:hover {
+    background-color: #f5f5f5;
+    transition: color 2s ease-in-out, background-color 0.15s ease-in-out;
+}

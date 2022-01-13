@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Kilojoules/Calories Calculator
+{% endblock %}
+
+{% block main %}
+<div class="section">
+    <h2>New Recipe</h2>
+    <form action="/kjcalc" method="post">
+        <div class="input-box">
+            <input class="input-field" autocomplete="off" name="recipename" placeholder="Recipe Name" type="text" autofocus>
+        </div>
+        <button class="btn btn-outline-primary" type="submit" name="function" value="newrecipe">Save recipe</button>
+    </form>
+
+    <br>
+    <h2>Access Old Recipes</h2>
+    <form action="/kjcalc" method="post">
+        <div class="input-box">
+            <select name="oldrecipes" class="selectbox">
+                <option selected disabled>Past recipes</option>
+                {% for recipe in past %}
+                    <option value="{{ recipe['name'] }}">{{ recipe['name'] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button class="btn btn-outline-primary" type="submit" name="function" value="revisit">Open recipe</button>
+    </form>
+</div>
+{% endblock %}

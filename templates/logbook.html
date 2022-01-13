@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Food Logbook
+{% endblock %}
+
+{% block main %}
+<div class="section">
+    <h2>Add Log</h2>
+    <form action="/logbook" method="post">
+        <div class="mb-3">
+            <div class="input-box">
+                <input autocomplete="off" class="input-field" name="foodname" placeholder="Food" type="text">
+            </div>
+
+            <div class="input-box">
+                <input autocomplete="off" class="input-field" name="date" type="date">
+            </div>
+
+            <div class="input-box">
+                <select class="selectbox" name="meal">
+                    <option selected disabled>Meal</option>
+                    <option></option>
+                    <option value="Breakfast">Breakfast</option>
+                    <option value="Lunch">Lunch</option>
+                    <option value="Dinner">Dinner</option>
+                    <option value="Snack">Snack</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <input autocomplete="off" class="input-field" name="energycount" placeholder="Energy count" type="number">
+
+            <input autocomplete="off" name="units" type="radio" value="kJ">
+            <label for="kJ">kJ</label>
+            <input autocomplete="off" name="units" type="radio" value="Calories">
+            <label for="Calories">Calories</label>
+
+            <button class="btn btn-outline-primary" type="submit" name="btn" value="add">Enter</button>
+        </div>
+    </form>
+</div>
+
+<div class="section">
+    <h2>Table of Contents</h2>
+    {% for key in info %}
+        <a href="#{{ key }}">{{ key }}</a><br>
+    {% endfor %}
+</div>
+
+<div class="section">
+    <h2>Logbook</h2>
+    {% for key, value in info.items() %}
+        <h3 id="{{ key }}">{{ key }}</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Food</th>
+                    <th>kJ</th>
+                    <th>Calories</th>
+                    <th>Meal</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in value %}
+
+                    <tr>
+                        <td>{{ row["food"] }}</td>
+                        <td>{{ row["kJenergy"] }}</td>
+                        <td>{{ row["kJenergy"] | kjtocal }}</td>
+                        <td>{{ row["meal"] }}</td>
+                        <td><form action="/deletelog" method="post"><button name = "logid" value="{{ row['logid'] }}">Delete</button></form></td>
+                    </tr>
+
+                {% endfor %}
+
+                <tr style="font-weight:bold">
+                    <b>
+                        <td>TOTAL</td>
+                        <td>{{ value | sum(attribute="kJenergy")}}</td>
+                        <td>{{ value | sum(attribute="kJenergy") | kjtocal }}</td>
+                        <td></td>
+                    </b>
+                </tr>
+            </tbody>
+        </table><br>
+    {% endfor %}
+</div>
+
+{% endblock %}
