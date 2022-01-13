@@ -88,7 +88,7 @@ def index():
 @app.route("/logbook", methods=["GET", "POST"])
 @login_required
 def foodlogbook():
-    meals = ["Other", "Snack", "Dinner", "Lunch", "Breakfast", ""]
+    meals = ["Other", "Snack", "Dinner", "Lunch", "Breakfast", ""]ic
 
     # Retrieve user info
     dates = systemdb.execute("SELECT DISTINCT(date) FROM fooddiary WHERE userid = ? ORDER BY date", session["userid"])
