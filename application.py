@@ -1,3 +1,4 @@
+import os
 from cs50 import SQL
 from flask import Flask, redirect, render_template, request, session, flash
 from flask_session import Session
@@ -12,7 +13,6 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 systemdb = SQL("sqlite:///system.db")
-fooddb = SQL("sqlite:///food.db")
 
 units = ["kJ", "Calories"]
 
@@ -134,7 +134,7 @@ def foodlogbook():
 @login_required
 def kjcalc():
 
-    ingredients = fooddb.execute("SELECT name FROM fooddata")
+    ingredients = systemdb.execute("SELECT name FROM fooddata")
     prevrecipes = systemdb.execute("SELECT * FROM recipe WHERE userid = ?", session["userid"])
 
     if request.method == "POST":
@@ -184,7 +184,7 @@ def kjcalc():
                 return render_template("kjcalc2.html", data=ingredients, curr=curr, alert="Quantity must be numeric.", recipe=recipe[0]["name"])
 
             # figure out what ingredient, retrieve it's kj count, divide it by 100 and multiply it by the size and add it to db
-            kJ100 = fooddb.execute("SELECT kJ FROM fooddata WHERE name = ?", request.form.get("ingredient"))
+            kJ100 = systemdb.execute("SELECT kJ FROM fooddata WHERE name = ?", request.form.get("ingredient"))
             kJ1 = round(kJ100[0]["kJ"] / 100 * float(request.form.get("quantity")))
 
             systemdb.execute("INSERT INTO ingredients (userid, recipeid, ingredient, kJ100, quantity, kJ) VALUES (?,?,?,?,?,?)",
@@ -287,7 +287,7 @@ def recipes():
 def deleteingredient():
 
     systemdb.execute("DELETE FROM ingredients WHERE userid = ? AND ingredientid = ?", session["userid"], request.form.get("ingredientid"))
-    ingredients = fooddb.execute("SELECT name FROM fooddata")
+    ingredients = systemdb.execute("SELECT name FROM fooddata")
     curr = systemdb.execute("SELECT * FROM ingredients WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
     recipe = systemdb.execute("SELECT * FROM recipe WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
 
