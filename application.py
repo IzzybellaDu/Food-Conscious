@@ -138,7 +138,7 @@ def foodlogbook():
 @login_required
 def kjcalc():
 
-    ingredients = systemdb.execute("SELECT name FROM fooddata")
+    ingredients = systemdb.execute("SELECT id, name FROM fooddata")
     prevrecipes = systemdb.execute("SELECT * FROM recipe WHERE userid = ?", session["userid"])
 
     if request.method == "POST":
