@@ -79,8 +79,8 @@
                 <tr style="font-weight:bold">
                     <b>
                         <td>TOTAL</td>
-                        <td>{{ value | sum(attribute="kJenergy")}}</td>
-                        <td>{{ value | sum(attribute="kJenergy") | kjtocal }}</td>
+                        <td>{{ value | totalling ("kJenergy") }}</td>
+                        <td>{{ value | totalling ("kJenergy") | kjtocal }}</td>
                         <td></td>
                     </b>
                 </tr>
