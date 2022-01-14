@@ -188,10 +188,10 @@ def kjcalc():
 
             # figure out what ingredient, retrieve it's kj count, divide it by 100 and multiply it by the size and add it to db
             kJ100 = systemdb.execute("SELECT kJ FROM fooddata WHERE name = ?", request.form.get("ingredient"))
-            kJ1 = round(kJ100[0]["kJ"] / 100 * float(request.form.get("quantity")))
+            kJsingle = round(kJ100[0]["kJ"] / 100 * float(request.form.get("quantity")))
 
             systemdb.execute("INSERT INTO ingredients (userid, recipeid, ingredient, kJ100, quantity, kJ) VALUES (?,?,?,?,?,?)",
-                session["userid"], session["recipeid"], request.form.get("ingredient"), kJ100[0]["kJ"], request.form.get("quantity"), kJ1)
+                session["userid"], session["recipeid"], request.form.get("ingredient"), kJ100[0]["kJ"], request.form.get("quantity"), kJsingle)
 
             curr = systemdb.execute("SELECT * FROM ingredients WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
 
