@@ -24,7 +24,7 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("userid") is None:
-            flash("Login required.")
+            flash("Login required. Don't have an account? Register for one by clicking at Register at the top right corner!")
             return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
@@ -312,8 +312,8 @@ def register():
     if request.method == "POST":
 
         # checking if all the fields are filled in
-        if not request.form.get("username") or not request.form.get("password"):
-            return render_template("register.html", alert="Must enter both fields")
+        if not request.form.get("username") or not request.form.get("password") or not request.form.get("confirmation"):
+            return render_template("register.html", alert="Must enter all fields")
 
         # checking if the username already exists
         rows = systemdb.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
@@ -321,13 +321,16 @@ def register():
         if len(rows) != 0:
             return render_template("register.html", alert="Username already taken")
 
-        # adding user data to the table
-        else:
-            systemdb.execute("INSERT INTO users (username, password) VALUES (?,?)", request.form.get(
-                "username"), generate_password_hash(request.form.get("password")))
+        # ensuring both password fields match
+        if request.form.get("password") != request.form.get("confirmation"):
+            return render_template("register.html", alert="Password not matching in both fields")
 
-            flash("Registration successful!")
-            return redirect("/login")
+        # adding user data to the table
+        systemdb.execute("INSERT INTO users (username, password) VALUES (?,?)", request.form.get(
+            "username"), generate_password_hash(request.form.get("password")))
+
+        flash("Registration successful!")
+        return redirect("/login")
 
     else:
         return render_template("register.html")
