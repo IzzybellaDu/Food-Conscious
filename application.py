@@ -24,7 +24,7 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("userid") is None:
-            flash("Login required. Don't have an account? Register for one by clicking at Register at the top right corner!")
+            flash("Login required.")
             return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
