@@ -70,10 +70,10 @@
                 <tr>
                     <td>{{ row["ingredient"] }}</td>
                     <td>{{ row["quantity"] }}</td>
-                    <td>{{ row["kJ100"] }}</td>
-                    <td>{{ row["kJ100"] | kjtocal }}</td>
-                    <td>{{ row["kJ"] }}</td>
-                    <td>{{ row["kJ"] | kjtocal }}</td>
+                    <td>{{ row["kj100"] }}</td>
+                    <td>{{ row["kj100"] | kjtocal }}</td>
+                    <td>{{ row["kj"] }}</td>
+                    <td>{{ row["kj"] | kjtocal }}</td>
                     <td><form action="/deleteingredient" method="post"><button name = "ingredientid" value="{{ row['ingredientid'] }}">Delete</button></form></td>
                 </tr>
 
@@ -85,8 +85,8 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td>{{ curr | totalling ('kJ')}}</td>
-                    <td>{{ curr | totalling ('kJ')| kjtocal }}</td>
+                    <td>{{ curr | totalling ("kj")}}</td>
+                    <td>{{ curr | totalling ("kj")| kjtocal }}</td>
                     <td></td>
                 </b>
             </tr>

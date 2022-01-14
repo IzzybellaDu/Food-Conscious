@@ -68,8 +68,8 @@
 
                     <tr>
                         <td>{{ row["food"] }}</td>
-                        <td>{{ row["kJenergy"] }}</td>
-                        <td>{{ row["kJenergy"] | kjtocal }}</td>
+                        <td>{{ row["kjenergy"] }}</td>
+                        <td>{{ row["kjenergy"] | kjtocal }}</td>
                         <td>{{ row["meal"] }}</td>
                         <td><form action="/deletelog" method="post"><button name = "logid" value="{{ row['logid'] }}">Delete</button></form></td>
                     </tr>
@@ -79,8 +79,8 @@
                 <tr style="font-weight:bold">
                     <b>
                         <td>TOTAL</td>
-                        <td>{{ value | totalling ("kJenergy") }}</td>
-                        <td>{{ value | totalling ("kJenergy") | kjtocal }}</td>
+                        <td>{{ value | totalling ("kjenergy") }}</td>
+                        <td>{{ value | totalling ("kjenergy") | kjtocal }}</td>
                         <td></td>
                     </b>
                 </tr>
