@@ -188,7 +188,7 @@ def kjcalc():
                 return render_template("kjcalc2.html", data=ingredients, curr=curr, alert="Quantity must be numeric.", recipe=recipe[0]["name"])
 
             # figure out what ingredient, retrieve it's kj count, divide it by 100 and multiply it by the size and add it to db
-            kJ100 = systemdb.execute("SELECT kj FROM fooddata WHERE name = ?", request.form.get("ingredient"))
+            kJ100 = systemdb.execute("SELECT kj FROM fooddata WHERE id = ?", request.form.get("ingredient"))
             #kJ1 = round(kJ100[0]["kj"] / 100 * float(request.form.get("quantity")))
 
             #systemdb.execute("INSERT INTO ingredients (userid, recipeid, ingredient, kj100, quantity, kj) VALUES (?,?,?,?,?,?)",
