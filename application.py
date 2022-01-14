@@ -197,7 +197,7 @@ def kjcalc():
             curr = systemdb.execute("SELECT * FROM ingredients WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
 
             flash("Ingredient added.")
-            return render_template("kjcalc2.html", curr=curr, data=ingredients, recipe=recipe[0]["name"], debug=kJ100)
+            return render_template("kjcalc2.html", curr=curr, data=ingredients, recipe=recipe[0]["name"])
 
         if request.form['function'] == 'addspecial':
             curr = systemdb.execute("SELECT * FROM ingredients WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
