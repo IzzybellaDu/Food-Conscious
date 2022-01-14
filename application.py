@@ -1,4 +1,5 @@
 import os
+import sys
 from cs50 import SQL
 from flask import Flask, redirect, render_template, request, session, flash
 from flask_session import Session
@@ -188,16 +189,15 @@ def kjcalc():
 
             # figure out what ingredient, retrieve it's kj count, divide it by 100 and multiply it by the size and add it to db
             kJ100 = systemdb.execute("SELECT kj FROM fooddata WHERE name = ?", request.form.get("ingredient"))
-            print(kJ100)
-            kJ1 = round(kJ100[0]["kj"] / 100 * float(request.form.get("quantity")))
+            #kJ1 = round(kJ100[0]["kj"] / 100 * float(request.form.get("quantity")))
 
-            systemdb.execute("INSERT INTO ingredients (userid, recipeid, ingredient, kj100, quantity, kj) VALUES (?,?,?,?,?,?)",
-                session["userid"], session["recipeid"], request.form.get("ingredient"), kJ100[0]["kj"], request.form.get("quantity"), kJ1)
+            #systemdb.execute("INSERT INTO ingredients (userid, recipeid, ingredient, kj100, quantity, kj) VALUES (?,?,?,?,?,?)",
+                #session["userid"], session["recipeid"], request.form.get("ingredient"), kJ100[0]["kj"], request.form.get("quantity"), kJ1)
 
             curr = systemdb.execute("SELECT * FROM ingredients WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
 
             flash("Ingredient added.")
-            return render_template("kjcalc2.html", curr=curr, data=ingredients, recipe=recipe[0]["name"])
+            return render_template("kjcalc2.html", curr=curr, data=ingredients, recipe=recipe[0]["name"], debug=kJ100)
 
         if request.form['function'] == 'addspecial':
             curr = systemdb.execute("SELECT * FROM ingredients WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
