@@ -291,7 +291,7 @@ def recipes():
 def deleteingredient():
 
     systemdb.execute("DELETE FROM ingredients WHERE userid = ? AND ingredientid = ?", session["userid"], request.form.get("ingredientid"))
-    ingredients = systemdb.execute("SELECT name FROM fooddata")
+    ingredients = systemdb.execute("SELECT id, name FROM fooddata")
     curr = systemdb.execute("SELECT * FROM ingredients WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
     recipe = systemdb.execute("SELECT * FROM recipe WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
 
