@@ -39,6 +39,20 @@ h3
     padding: 6px 12px;
 }
 
+#separate{
+    margin: auto 30px auto auto;
+}
+
+#or {
+    position: relative;
+    padding-right: 10px;
+    float: left;
+}
+
+#words {
+    padding: 6px 12px;
+}
+
 .selectbox
 {
     padding: 6px 0px;
@@ -58,8 +72,4 @@ footer
 .section:hover {
     background-color: #f5f5f5;
     transition: color 2s ease-in-out, background-color 0.15s ease-in-out;
-}
-
-#separate{
-    margin: auto 30px auto;
 }

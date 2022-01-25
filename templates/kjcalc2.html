@@ -29,7 +29,7 @@
     <!-- For unique ingredients not found in the database -->
     <h3>Add a custom ingredient</h3>
     <form action="/kjcalc" method="post">
-        <div class="input-box">
+        <div class="input-box" id="separate">
             <input type="text" autocomplete="off" name="name" placeholder="Name of ingredient" class="input-field">
         </div>
         <div class="input-box">
@@ -38,8 +38,8 @@
         <div class="input-box">
             <input type="text" autocomplete="off" name="quantity" placeholder="Quantity used in grams" class="input-field">
         </div>
-        
-        <div class="input-box" id="separate">
+        <div id="or"><p id="words">OR</p></div>
+        <div class="input-box">
             <input type="number" autocomplete="off" name="totalkJ" placeholder="Energy of amount used" class="input-field">
         </div>
         
