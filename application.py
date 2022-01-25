@@ -160,6 +160,8 @@ def kjcalc():
             return render_template("kjcalc2.html", data=ingredients, recipe=request.form.get("recipename"))
 
         if request.form['function'] == 'revisit':
+            if not request.form.get("oldrecipes"):
+                return render_template("kjcalc1.html", alert="Invalid recipe.", past=prevrecipes)
             check = systemdb.execute("SELECT * FROM recipe WHERE name = ? AND userid = ?", request.form.get("oldrecipes"), session["userid"])
             if not check:
                 return render_template("kjcalc1.html", alert="Invalid recipe.", past=prevrecipes)
