@@ -205,13 +205,16 @@ def kjcalc():
             curr = systemdb.execute("SELECT * FROM ingredients LEFT JOIN fooddata ON ingredients.dataid = fooddata.id WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
 
             if not request.form.get("totalkJ") and not request.form.get("kJ100"):
-                return render_template("kjcalc2.html", alert="Must enter energy count for the amount used or the ingredient in 100g and its units.", curr=curr, data=ingredients, recipe=recipe[0]["name"])
+                return render_template("kjcalc2.html", alert="Must enter energy count for the amount used or the ingredient's energy count per 100g and the quantity used.", curr=curr, data=ingredients, recipe=recipe[0]["name"])
 
             if request.form.get("kJ100") and not request.form.get("quantity"):
-                return render_template("kjcalc2.html", alert="Must enter energy count per 100 and the quantity used.", curr=curr, data=ingredients, recipe=recipe[0]["name"])
+                return render_template("kjcalc2.html", alert="Must enter energy count per 100g and the quantity used.", curr=curr, data=ingredients, recipe=recipe[0]["name"])
 
             if not request.form.get("units") or request.form.get("units") not in units:
                 return render_template("kjcalc2.html", alert="Must enter units or not a valid choice for units.", curr=curr, data=ingredients, recipe=recipe[0]["name"])
+
+            if request.form.get("totalkJ") and request.form.get("kJ100"):
+                return render_template("kjcalc2.html", alert="Must enter either energy count per 100g and the quantity used or the total energy count for the amount of the ingredient used.", curr=curr, data=ingredients, recipe=recipe[0]["name"])
 
             if request.form.get("quantity"):
                 try:
@@ -298,6 +301,7 @@ def deleteingredient():
     curr = systemdb.execute("SELECT * FROM ingredients LEFT JOIN fooddata ON ingredients.dataid = fooddata.id WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
     recipe = systemdb.execute("SELECT * FROM recipe WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
 
+    flash("Ingredient successfully deleted.")
     return render_template("kjcalc2.html", curr=curr, data=ingredients, recipe=recipe[0]["name"])
 
 
