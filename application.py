@@ -167,7 +167,7 @@ def kjcalc():
                 return render_template("kjcalc1.html", alert="Invalid recipe.", past=prevrecipes)
 
             session["recipeid"] = check[0]["recipeid"]
-            curr = systemdb.execute("SELECT * FROM ingredients WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
+            curr = systemdb.execute("SELECT * FROM ingredients LEFT JOIN fooddata ON ingredients.dataid = fooddata.id WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
             recipe = systemdb.execute("SELECT * FROM recipe WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
             return render_template("kjcalc2.html", curr=curr, data=ingredients, recipe=recipe[0]["name"])
 
@@ -178,7 +178,7 @@ def kjcalc():
         recipe = systemdb.execute("SELECT * FROM recipe WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
 
         if request.form['function'] == 'add':
-            curr = systemdb.execute("SELECT * FROM ingredients WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
+            curr = systemdb.execute("SELECT * FROM ingredients LEFT JOIN fooddata ON ingredients.dataid = fooddata.id WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
 
             if not request.form.get("ingredient") or not request.form.get("quantity"):
                 return render_template("kjcalc2.html", data=ingredients, curr=curr, alert="Must fill up both fields.", recipe=recipe[0]["name"])
@@ -190,19 +190,19 @@ def kjcalc():
                 return render_template("kjcalc2.html", data=ingredients, curr=curr, alert="Quantity must be numeric.", recipe=recipe[0]["name"])
 
             # figure out what ingredient, retrieve it's kj count, divide it by 100 and multiply it by the size and add it to db
-            kJ100 = systemdb.execute("SELECT name, kj FROM fooddata WHERE id = ?", request.form.get("ingredient"))
-            kJ1 = round(kJ100[0]["kj"] / 100 * float(request.form.get("quantity")))
+            kJ100 = systemdb.execute("SELECT energykj FROM fooddata WHERE id = ?", request.form.get("ingredient"))
+            kJ1 = round(kJ100[0]["energykj"] / 100 * float(request.form.get("quantity")))
 
-            systemdb.execute("INSERT INTO ingredients (userid, recipeid, ingredient, kj100, quantity, kj) VALUES (?,?,?,?,?,?)",
-                session["userid"], session["recipeid"], kJ100[0]["name"], kJ100[0]["kj"], request.form.get("quantity"), kJ1)
+            systemdb.execute("INSERT INTO ingredients (userid, recipeid, dataid, quantity, kj) VALUES (?,?,?,?,?)",
+                session["userid"], session["recipeid"], request.form.get("ingredient"), request.form.get("quantity"), kJ1)
 
-            curr = systemdb.execute("SELECT * FROM ingredients WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
+            curr = systemdb.execute("SELECT * FROM ingredients LEFT JOIN fooddata ON ingredients.dataid = fooddata.id WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
 
             flash("Ingredient added.")
             return render_template("kjcalc2.html", curr=curr, data=ingredients, recipe=recipe[0]["name"])
 
         if request.form['function'] == 'addspecial':
-            curr = systemdb.execute("SELECT * FROM ingredients WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
+            curr = systemdb.execute("SELECT * FROM ingredients LEFT JOIN fooddata ON ingredients.dataid = fooddata.id WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
 
             if not request.form.get("totalkJ") and not request.form.get("kJ100"):
                 return render_template("kjcalc2.html", alert="Must enter energy count for the amount used or the ingredient in 100g and its units.", curr=curr, data=ingredients, recipe=recipe[0]["name"])
@@ -213,11 +213,12 @@ def kjcalc():
             if not request.form.get("units") or request.form.get("units") not in units:
                 return render_template("kjcalc2.html", alert="Must enter units or not a valid choice for units.", curr=curr, data=ingredients, recipe=recipe[0]["name"])
 
-            try:
-                float(request.form.get("quantity"))
+            if request.form.get("quantity"):
+                try:
+                    float(request.form.get("quantity"))
 
-            except:
-                return render_template("kjcalc2.html", data=ingredients, curr=curr, alert="Quantity must be numeric.", recipe=recipe[0]["name"])
+                except:
+                    return render_template("kjcalc2.html", data=ingredients, curr=curr, alert="Quantity must be numeric.", recipe=recipe[0]["name"])
 
             if request.form.get("kJ100"):
                 if request.form.get("units") == "kJ":
@@ -228,8 +229,8 @@ def kjcalc():
 
                 total = round(kJ/100 * int(request.form.get("quantity")))
 
-                systemdb.execute("INSERT INTO ingredients (userid, recipeid, ingredient, kj100, quantity, kj) VALUES (?,?,?,?,?,?)",
-                    session["userid"], session["recipeid"], request.form.get("name"), kJ, request.form.get("quantity"), total)
+                systemdb.execute("INSERT INTO ingredients (userid, recipeid, ingredientname, kj100, quantity, kj, custom) VALUES (?,?,?,?,?,?,?)",
+                    session["userid"], session["recipeid"], request.form.get("name"), kJ, request.form.get("quantity"), total, 'true')
 
             else:
                 if request.form.get("units") == "kJ":
@@ -238,16 +239,16 @@ def kjcalc():
                 else:
                     kJ = caltokj(int(request.form.get("totalkJ")))
 
-                systemdb.execute("INSERT INTO ingredients (userid, recipeid, ingredient, kj) VALUES (?,?,?,?)",
-                    session["userid"], session["recipeid"], request.form.get("name"), kJ)
+                systemdb.execute("INSERT INTO ingredients (userid, recipeid, ingredientname, kj, custom) VALUES (?,?,?,?,?)",
+                    session["userid"], session["recipeid"], request.form.get("name"), kJ, 'true')
 
-            curr = systemdb.execute("SELECT * FROM ingredients WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
+            curr = systemdb.execute("SELECT * FROM ingredients LEFT JOIN fooddata ON ingredients.dataid = fooddata.id WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
 
             flash("Ingredient added.")
             return render_template("kjcalc2.html", curr=curr, data=ingredients, recipe=recipe[0]["name"])
 
         if request.form['function'] == 'serving':
-            curr = systemdb.execute("SELECT * FROM ingredients WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
+            curr = systemdb.execute("SELECT * FROM ingredients LEFT JOIN fooddata ON ingredients.dataid = fooddata.id WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
 
             serveinfo = {}
 
@@ -294,7 +295,7 @@ def deleteingredient():
 
     systemdb.execute("DELETE FROM ingredients WHERE userid = ? AND ingredientid = ?", session["userid"], request.form.get("ingredientid"))
     ingredients = systemdb.execute("SELECT id, name FROM fooddata")
-    curr = systemdb.execute("SELECT * FROM ingredients WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
+    curr = systemdb.execute("SELECT * FROM ingredients LEFT JOIN fooddata ON ingredients.dataid = fooddata.id WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
     recipe = systemdb.execute("SELECT * FROM recipe WHERE userid = ? AND recipeid = ?", session["userid"], session["recipeid"])
 
     return render_template("kjcalc2.html", curr=curr, data=ingredients, recipe=recipe[0]["name"])

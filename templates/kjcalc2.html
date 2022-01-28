@@ -68,15 +68,29 @@
 
         <tbody>
             {% for row in curr %}
-                <tr>
-                    <td>{{ row["ingredient"] }}</td>
-                    <td>{{ row["quantity"] }}</td>
-                    <td>{{ row["kj100"] }}</td>
-                    <td>{{ row["kj100"] | kjtocal }}</td>
-                    <td>{{ row["kj"] }}</td>
-                    <td>{{ row["kj"] | kjtocal }}</td>
-                    <td><form action="/deleteingredient" method="post"><button name = "ingredientid" value="{{ row['ingredientid'] }}">Delete</button></form></td>
-                </tr>
+                {% if row["custom"] %}
+                    <tr>
+                        <td>{{ row["ingredientname"] }}</td>
+                        <td>{{ row["quantity"] }}</td>
+                        <td>{{ row["kj100"] }}</td>
+                        <td>{{ row["kj100"] | kjtocal }}</td>
+                        <td>{{ row["kj"] }}</td>
+                        <td>{{ row["kj"] | kjtocal }}</td>
+                        <td><form action="/deleteingredient" method="post"><button name = "ingredientid" value="{{ row['ingredientid'] }}">Delete</button></form></td>
+                    </tr>
+
+                {% else %}
+                    <tr>
+                        <td>{{ row["name"] }}</td>
+                        <td>{{ row["quantity"] }}</td>
+                        <td>{{ row["energykj"] }}</td>
+                        <td>{{ row["energykj"] | kjtocal }}</td>
+                        <td>{{ row["kj"] }}</td>
+                        <td>{{ row["kj"] | kjtocal }}</td>
+                        <td><form action="/deleteingredient" method="post"><button name = "ingredientid" value="{{ row['ingredientid'] }}">Delete</button></form></td>
+                    </tr>
+
+                {% endif %}
 
             {% endfor %}
 
