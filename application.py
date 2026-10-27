@@ -9,14 +9,18 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 # From CS50 week 9 notes
 app = Flask(__name__)
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "food-conscious-secret-key-12345")
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 uri = os.getenv("DATABASE_URL")
-if uri.startswith("postgres://"):
-    uri = uri.replace("postgres://", "postgresql://")
-systemdb = SQL(uri)
+if uri:
+    if uri.startswith("postgres://"):
+        uri = uri.replace("postgres://", "postgresql://")
+    systemdb = SQL(uri)
+else:
+    systemdb = SQL("sqlite:///system.db")
 
 units = ["kJ", "Calories"]
 
@@ -377,3 +381,7 @@ def changepassword():
 
     else:
         return render_template("changepassword.html")
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

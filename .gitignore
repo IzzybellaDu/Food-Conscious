@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*$py.class
+flask_session/*
+!flask_session/.gitkeep
+.env
+.venv/
+env/
+venv/
+*.bak
+.DS_Store
