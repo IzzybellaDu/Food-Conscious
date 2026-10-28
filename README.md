@@ -21,9 +21,9 @@ A health and nutrition web application designed to help users track their daily 
 
 ## Tech Stack
 
-- **Backend**: Python, [Flask](https://flask.palletsprojects.com/), [Flask-Session](https://flask-session.readthedocs.io/), [CS50 SQL](https://cs50.readthedocs.io/libraries/cs50/python/)
+- **Backend**: Python, [Flask](https://flask.palletsprojects.com/), [Flask-Session](https://flask-session.readthedocs.io/), [psycopg2](https://www.psycopg.org/) (PostgreSQL client)
 - **Frontend**: HTML5, Jinja templates, CSS3, [Bootstrap 5](https://getbootstrap.com/), [Select2](https://select2.org/) (searchable ingredient dropdowns)
-- **Database**: SQLite (local development) / PostgreSQL (production)
+- **Database**: PostgreSQL (production via Neon) / SQLite (local development)
 - **Production Server**: [Gunicorn](https://gunicorn.org/)
 
 ---

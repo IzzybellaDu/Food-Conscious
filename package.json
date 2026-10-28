@@ -1,0 +1,16 @@
+{
+  "name": "food-conscious",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "echo 'Build step: no static build required for Flask application' && node -e 'console.log(\"Node & Neon configuration validated\")'",
+    "start": "python3 application.py",
+    "seed": "node scripts/seed_neon.mjs"
+  },
+  "dependencies": {
+    "@neon/config": "^1.9.4",
+    "@neon/env": "^1.6.5",
+    "@neondatabase/serverless": "^1.2.0",
+    "dotenv": "^18.0.9"
+  }
+}

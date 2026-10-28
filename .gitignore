@@ -9,3 +9,6 @@ env/
 venv/
 *.bak
 .DS_Store
+.neon
+node_modules/
+.env.local

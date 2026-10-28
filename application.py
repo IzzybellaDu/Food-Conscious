@@ -1,26 +1,32 @@
 import os
 import sys
-from cs50 import SQL
-from flask import Flask, redirect, render_template, request, session, flash
-from flask_session import Session
 from functools import wraps
 
-from werkzeug.security import check_password_hash, generate_password_hash
+# Load environment variables from .env.local or .env if present
+for env_file in [".env.local", ".env"]:
+    if os.path.exists(env_file):
+        with open(env_file) as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    key, val = line.split("=", 1)
+                    key = key.strip()
+                    val = val.strip().strip("'\"")
+                    if key and key not in os.environ:
+                        os.environ[key] = val
 
-# From CS50 week 9 notes
+from flask import Flask, redirect, render_template, request, session, flash
+from flask_session import Session
+from werkzeug.security import check_password_hash, generate_password_hash
+from db import Database
+
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "food-conscious-secret-key-12345")
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-uri = os.getenv("DATABASE_URL")
-if uri:
-    if uri.startswith("postgres://"):
-        uri = uri.replace("postgres://", "postgresql://")
-    systemdb = SQL(uri)
-else:
-    systemdb = SQL("sqlite:///system.db")
+systemdb = Database()
 
 units = ["kJ", "Calories"]
 
@@ -339,7 +345,7 @@ def register():
 
         # adding user data to the table
         systemdb.execute("INSERT INTO users (username, password) VALUES (?,?)", request.form.get(
-            "username"), generate_password_hash(request.form.get("password")))
+            "username"), generate_password_hash(request.form.get("password"), method="pbkdf2:sha256"))
 
         flash("Registration successful!")
         return redirect("/login")
@@ -374,7 +380,7 @@ def changepassword():
             return render_template("changepassword.html", alert="Invalid old password.")
 
         systemdb.execute("UPDATE users SET password = ? WHERE userid = ?", generate_password_hash(
-            request.form.get("newpass")), session["userid"])
+            request.form.get("newpass"), method="pbkdf2:sha256"), session["userid"])
 
         flash("Password successfully changed!")
         return redirect("/")
